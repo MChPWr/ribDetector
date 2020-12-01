@@ -1,9 +1,9 @@
 import numpy as np
 import cv2
 
-# img = cv2.imread('rtg_examples/pics/healthy/healthy_32yo_male_RTG.jpg',0)
-img = cv2.imread('rtg_examples/pics/healthy/healthy_75yo_female_RTG.jpg',0)
-#img = cv2.imread('rtg_examples/pics/COVID-19/covid19_30yo_female_RTG.jpeg', 0)
+#img = cv2.imread('rtg_examples/pics/healthy/healthy_32yo_male_RTG.jpg',0)
+#img = cv2.imread('rtg_examples/pics/healthy/healthy_75yo_female_RTG.jpg',0)
+img = cv2.imread('rtg_examples/pics/COVID-19/covid19_30yo_female_RTG.jpeg', 0)
 
 cv2.imshow('aa',img)
 
@@ -64,9 +64,38 @@ cY = int(M["m01"] / M["m00"])
 cv2.circle(sample, (cX, cY), 5, (255, 255, 255), -1)
 cv2.putText(sample, "centroid", (cX - 25, cY - 25),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 
+
+# cv2.circle(sample, (50, 100), 5, (255, 255, 255), -1)
 # cany3b = cv2.Canny(sample, 40, 100, None,5)
 cv2.imshow('Cannyclosing3bb',sample)
 
+m,n = sample.shape[:2]
+
+distance_x=[]
+distance_y=[]
+
+for i in range(0,m):
+    for j in range(0,n):
+        if sample[i,j] > 128:
+            distance_x.append(abs(cX-i))
+            distance_y.append(abs(cY-j))
+
+distance_x.sort()
+distance_y.sort()
+
+maxX = distance_x[-1]
+maxY = distance_y[-1]
+
+print (maxX)
+deltaX = int(0.7*maxX)
+deltaY = int(0.7*maxY)
+
+image = cv2.rectangle(sample, (cX-deltaX,cY-deltaY), (cX+deltaX,cY+deltaY), (255,0,0), thickness=2)
+# cv2.imshow('lung',image)
+# print(distance_x)
+# 
+image_with_rect = cv2.rectangle(img, (cX-deltaX,cY-deltaY), (cX+deltaX,cY+deltaY), (255,0,0), thickness=2)
+cv2.imshow('lung',image_with_rect)
 # erosion3 = cv2.erode(cany2,kernel,iterations = 6)
 # cv2.imshow('eroafter canny', erosion3)
 
